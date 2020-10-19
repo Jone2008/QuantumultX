@@ -13,7 +13,7 @@
 // ^https?:\/\/sports\.lifesense\.com\/sport_service\/sport\/sport\/uploadMobileStepV2 url script-request-body https://raw.githubusercontent.com/iepngs/Script/master/lxhealth/index.js
 
 // [local_tasK]
-// 16 9 * * * https://raw.githubusercontent.com/iepngs/Script/master/lxhealth/index.js, tag=lxhealth, enabled=true
+// 58 19 * * * https://raw.githubusercontent.com/Jone2008/QuantumultX/master/lexin.js, tag=乐心运动, enabled=true
 
 // ----------------------------------------------------------------------------
 
