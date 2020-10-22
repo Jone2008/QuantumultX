@@ -37,9 +37,9 @@ const Protagonist = "乐心运动";
 const CookieKey = "lxhealthCookie";
 let steps = (()=>{
     const settingStep = +$hammer.read("lxhealthStep");
-    return settingStep ? settingStep : 10121;
-    //默认上传步数: 20007+随机数(0-2000)
-    //可以用boxjs改cookie:lxhealthStep,或者在本地改这个20007
+    return settingStep ? settingStep : 11858;
+    //默认上传步数: 11858+随机数(0-3000)
+    //可以用boxjs改cookie:lxhealthStep,或者在本地改这个11858
 })();
 
 function GetCookie() {
@@ -66,7 +66,7 @@ function GetCookie() {
 }
 
 function buildReqBody(raw, modify = true) {
-    steps += Math.ceil(Math.random() * 2000);
+    steps += Math.ceil(Math.random() * 3000);
     const calories = (0.0325 * steps).toFixed(2);
     const distance = Math.ceil((0.7484 * steps).toFixed(1));
 
