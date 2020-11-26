@@ -1,8 +1,9 @@
 
 /*ziye
 
-本人github地址     https://github.com/ziye12/JavaScript 
-转载请备注个名字，谢谢
+转载自ziye12，仅修改通知方式，自用
+
+作者github地址     https://github.com/ziye12/JavaScript 
 
 11.25 增加 阅读时长上传，阅读金币，阅读随机金币
 11.25 修复翻倍宝箱不同时领取的问题.增加阅读金币判定
