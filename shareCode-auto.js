@@ -67,7 +67,7 @@ function create(path, name) {
         if (needAgain) return;
         const { message } = JSON.parse(data);
         $.log(`\n${message}\n${data}`);
-        $.result.push(`${name}： ${_data.message}`);
+        $.result.push(`${name}： ${message}`);
       } catch (e) {
         $.logErr(e, resp);
       } finally {
