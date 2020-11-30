@@ -62,6 +62,11 @@ function create(path, name) {
   return new Promise((resolve) => {
     const url = { url: path };
     $.get(url, async (err, resp, data) => {
+      if (err) {
+        $.log(JSON.stringify(err));
+        resolve(err);
+        return;
+      }
       try {
         const needAgain = await checkWhetherNeedAgain(resp, create, path, name);
         if (needAgain) return;
