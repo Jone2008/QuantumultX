@@ -45,7 +45,7 @@ http:\/\/upload\.gifshow\.com\/rest\/n\/system\/speed url script-request-header 
 */
 const logs = false   //日志开关
 const $ = new Env('快手视频')
-const cookieVal = $.getdata('cookiebz_ks');
+const cookieVal = $.getdata('cookie_ks');
 let isGetCookie = typeof $request !== 'undefined'
 
 if (isGetCookie) {
