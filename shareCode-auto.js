@@ -8,11 +8,11 @@ const shareCodes = [
     jxgc: $.getdata("jx_shareCode1") || "wuvqpko2F3tj8Yvrdbft0A==",
   },
   {
-    zd: $.getdata("zd_shareCode2") || "",
-    nc: $.getdata("nc_shareCode2") || "",
-    mc: $.getdata("mc_shareCode2") || "",
-    ddgc: $.getdata("dd_shareCode2") || "",
-    jxgc: $.getdata("jx_shareCode2") || "",
+    zd: $.getdata("zd_shareCode2") || "4npkonnsy7xi3pzaezezc7plx2o32nlk4ih2jna",
+    nc: $.getdata("nc_shareCode2") || "5a1b6cd9cc62446cb5ec05e3ef3d7821",
+    mc: $.getdata("mc_shareCode2") || "MTE1NDQ5OTUwMDAwMDAwNDI1OTMxNDE=",
+    ddgc: $.getdata("dd_shareCode2") || "P04z54XCjVWnYaS5m9cZ2f5231LknLSN7iRCqE",
+    jxgc: $.getdata("jx_shareCode2") || "UdXIG7xaeRenKkCRnXA4bA==",
   },
 ];
 $.result = [];
