@@ -1,17 +1,8 @@
 /*
-update 2021/6/7
-京东试用：脚本更新地址 https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_try.js
-脚本兼容: QuantumultX, Node.js
-⚠️ 非常耗时的脚本！
-每天最多关注300个商店，但用户商店关注上限为500个。
-请配合取关脚本试用，使用 jd_unsubscribe.js 提前取关至少250个商店确保京东试用脚本正常运行。
-==========================Quantumultx=========================
-[task_local]
-# 取关京东店铺商品，请在 boxjs 修改取消关注店铺数量
-5 10 * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_unsubscribe.js, tag=取关京东店铺商品, enabled=true
-# 京东试用
-30 10 * * * https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_try.js, tag=京东试用, img-url=https://raw.githubusercontent.com/ZCY01/img/master/jdtryv1.png, enabled=true
- */
+
+30 10 * * * jd_try.js
+
+*/
 const $ = new Env('京东试用')
 
 const selfDomain = 'https://try.m.jd.com'
@@ -29,9 +20,9 @@ const args = {
 	// 试用类型
 	typeList: ["普通试用", "闪电试用"],
 	// 商品过滤关键字
-	goodFilters: "教程@软件@英语@辅导@培训".split('@'),
+	goodFilters: "教程@软件@英语@辅导@培训@表带@皮带@瑜伽垫@水饺@燕窝@高钙奶@纯牛奶@树苗@集体课@现场课@奶粉@看房游@口服液@灸贴@云南旅游@掌之友@金满缘@新兴港隆@拆机@品鉴@试饮@咨询@零基础@直播课@体验@网课@训练营@礼品袋@装修@快狐@疣@包皮@疏通@药@鱼胶@狗狗@幼犬@戒烟@尿垫@浪潮英信@专家@长高课@饲料@代办@美缝剂@体验@遮瑕@洗面奶@洁面乳@抗皱@膏@猫砂@购房@消食@积食@软胶囊@养生茶@驼背@房产@辅食@打印纸@财务管理@进销存@实战@生发液@早泄@阳痿@染发@补血@珍珠粉@玛咖@灰指甲@阿胶@维生素@同仁堂@讲堂@教材@补肾@精品课@开发@疹@疮@疥@软膏@真题@模拟题@专车接送@看海@看房@学员@投资@通关@名师@节课@酵素@滴眼液@全国流量@奶粉@香皂@精油@爱犬@课程@教学@教程@猫人@学车@你拍一@手机壳@益生菌@宠物@会计@考试@职称@漱口水@吊坠@胶原蛋白@鲜花@蛋白粉@降血糖@降血脂@降血压@管理系统@收银系统@体检@检查@减肥@玫瑰花@股票@丰胸@避孕套@保湿@补水@粉底@口红@耳钉@耳环@耳坠@收纳盒@大王卡@管理软件@博仑帅@荧光笔@原子笔@月租@上网卡@不限流量@日租卡@洗车机@热水袋@钥匙扣@饼干@甲醛检测@贴膜@美容器@拖鞋@桨叶@烫发@清洁套装@鼠标垫@数据线@硒鼓@壁纸@防晒霜@护手霜@面霜@添加剂@修复@祛疤@精华液@玻尿酸@挂画@壁画@精华水@润滑油@机油@普洱茶@吸奶器@吸顶灯@爽肤水@面膜@冰箱底座@胶漆@小靓美@洁面扑@内衣@胸罩@文胸@卷尺@种子@档案袋@塑料袋@垃圾袋@癣@脚气@阴道@生殖器@肛门@狐臭@老太太@妇女@私处@孕妇@卫生巾@卫生条@培训@洋娃娃@男孩玩具@女孩玩具@益智@女性内衣@女性内裤@女内裤@女内衣@女孩@三角裤@鱼饵@钓鱼@尿杯@安全座椅@玩具@娃娃@网课@课程@辅导@网校@电商@车载充电器@网络课程@美少女@纸尿裤@英语@俄语@四级@六级@四六级@在线网络@在线@阴道炎@宫颈@糜烂@喷剂@飞机杯@手机膜@钢化膜@水凝膜@手机壳@手机支架@钢化膜@猫粮@狗粮@戒指@手链@项链@手镯@牙刷@加湿器@水垢@喷雾@茶叶@净水壶@眼霜@香水@墨盒@墨水@墨粉@颜料@中性笔@钢笔@马克笔@震动棒@自慰器@延时@触媒".split('@'),
 	// 商品最低价格
-	minPrice: 0,
+	minPrice: 70,
 	// 商品提供最多的数量
 	maxSupplyCount: 10,
 	// 商品试用之间的间隔, 单位：毫秒，随机间隔[applyInterval, applyInterval+2000]
@@ -71,7 +62,7 @@ const typeMap = {
 		return
 	}
 	for (let i = 0; i < $.cookiesArr.length; i++) {
-		if ($.cookiesArr[i]) {
+			if ($.cookiesArr[i]) {
 			$.cookie = $.cookiesArr[i];
 			$.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
 			$.index = i + 1;
@@ -90,24 +81,68 @@ const typeMap = {
 			$.goodList = []
 			$.successList = []
 			if (allGoodList.length == 0) {
-				await getGoodList()
+				for (let ii=0;ii<5;ii++ ){
+                try{await getGoodList()
 				filterGoodList()
+                await $.wait(Math.floor(Math.random() * 20000 + args.applyInterval))
+                break
+                } catch (e){
+                    if (ii>5){
+                    console.log('请在其它时间重试') 
+                    break   
+                    }
+                    console.log('接口TMD不稳定，重试ing')
+                }}
 			}
-			await getApplyStateByActivityIds()
+			for(let ii=0;ii<5;ii++ ){
+            try{await getApplyStateByActivityIds()
+                break
+            } catch(e){if (ii>5){
+                console.log('请在其它时间重试') 
+                break   
+                }
+                console.log('接口TMD不稳定，重试ing')
+            }
+            }
 
 			$.totalTry = 0
 			$.totalGoods = $.goodList.length
-			await tryGoodList()
-			await getSuccessList()
-
-			await showMsg()
+			for(let ii=0;ii<5;ii++ ){
+			try{await tryGoodList()
+				break
+			} catch (e) {
+				if (ii>5){
+					console.log('请在其它时间重试') 
+					break   
+					}
+					console.log('接口TMD不稳定，重试ing')
+						} 
+			}
+			for(let ii=0;ii<5;ii++ ){
+			try{
+            await getSuccessList()
+			break
+            } catch(e){
+				if (ii>5){
+					console.log('请在其它时间重试') 
+					break   
+					}
+					console.log('接口又TMD不稳定，重试ing')
+						}   
+            }
+			
+			try{await showMsg()
+                } catch(e){console.log('TMD显示结果也不稳定')}
 		}
+		
+	
 	}
-	await $.notify.sendNotify(`${$.name}`, notifyMsg);
+    try{
+	await $.notify.sendNotify(`${$.name}`, notifyMsg);} catch(e){console.log('发个信息而已也失败了。。。')}
 })()
 	.catch((e) => {
-		console.log(`❗️ ${$.name} 运行错误！\n${e}`)
-	}).finally(() => $.done())
+		console.log(`❗️ ${$.name} 运行错误！\n`)
+	})
 
 function requireConfig() {
 	return new Promise(resolve => {
@@ -197,6 +232,7 @@ function getGoodListByCond(cids, page, pageSize, type, state) {
 					}
 				}
 			} catch (e) {
+				console.log('接口神经病发作了')
 				reject(`⚠️ ${arguments.callee.name.toString()} API返回结果解析出错\n${e}\n${JSON.stringify(data)}`)
 			} finally {
 				resolve()
@@ -215,6 +251,7 @@ async function getGoodList() {
 			$.totalPages = 1
 			for (let page = 1; page <= $.totalPages; page++) {
 				await getGoodListByCond(cidsMap[cidsKey], page, args.pageSize, typeMap[typeKey], '0')
+				
 			}
 		}
 	}
