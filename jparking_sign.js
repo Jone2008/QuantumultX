@@ -112,7 +112,7 @@ function GetCookie() {
 // 签到
 function checkIn() {
   let opt = {
-    url: `https://jparking.jslife.com.cn/jparking-other-service/coupons/integral/receive`,
+    url: `https://jparking.jslife.com.cn/jparking-other-service/coupons/getSerialSign`,
     headers: {
       "Accept": "application/json, text/plain, */*",
       "Accept-Encoding": "gzip, deflate, br",
