@@ -8,7 +8,7 @@
 hostname = m.mallcoo.cn
 */
 
-// Quantumult X 脚本：自动获取 mallId 和 token 并打印，支持多种请求体格式
+// Quantumult X 脚本：自动获取 mallId 和 token 并打印
 const urlPattern = "https://m.mallcoo.cn/api/user/User/CheckinV2";
 
 // 检查是否是目标请求
@@ -21,46 +21,24 @@ if ($request.url.indexOf(urlPattern) !== -1 && $request.method === "POST") {
 
         let mallId, token;
 
-        // 尝试解析 JSON 格式
-        try {
-            const requestBody = JSON.parse($request.body);
-            if (requestBody && typeof requestBody === 'object') {
-                // 支持 MallId 和 MallID（大小写不敏感）
-                mallId = requestBody.MallId !== undefined ? requestBody.MallId : requestBody.MallID;
-                // 检查 Header 是否存在，并支持 Token 的变体
-                token = requestBody.Header && (requestBody.Header.Token || requestBody.Header.token);
+        // 解析 JSON 格式（根据抓包确认是 application/json）
+        const requestBody = JSON.parse($request.body);
+        if (requestBody && typeof requestBody === 'object') {
+            // 支持 MallId 和 MallID（大小写不敏感）
+            mallId = requestBody.MallId !== undefined ? requestBody.MallId : requestBody.MallID;
+            // 检查 Header 是否存在，并支持 Token 的变体
+            token = requestBody.Header && (requestBody.Header.Token || requestBody.Header.token);
 
-                // 检查 mallId 是否有效
-                if (mallId === undefined || mallId === null) {
-                    throw new Error("mallId 未定义或为空 (JSON)");
-                }
-                // 检查 token 是否有效
-                if (token === undefined || token === null) {
-                    throw new Error("token 未定义或为空 (JSON)");
-                }
-            } else {
-                throw new Error("JSON 请求体无效");
+            // 检查 mallId 是否有效
+            if (mallId === undefined || mallId === null) {
+                throw new Error("mallId 未定义或为空");
             }
-        } catch (jsonError) {
-            console.log(`JSON 解析失败: ${jsonError.message}`);
-
-            // 尝试解析 URL-encoded 格式
-            if ($request.body.includes("=") && $request.body.includes("&")) {
-                const params = new URLSearchParams($request.body);
-                // 支持大小写变体
-                mallId = params.get("MallId") || params.get("MallID");
-                token = params.get("Header.Token") || params.get("token");
-
-                if (mallId === null) {
-                    throw new Error("mallId 未定义或为空 (URL-encoded)");
-                }
-                if (token === null) {
-                    throw new Error("token 未定义或为空 (URL-encoded)");
-                }
-            } else {
-                // 其他格式，完整输出请求体
-                throw new Error(`未知请求体格式: ${$request.body}`);
+            // 检查 token 是否有效
+            if (token === undefined || token === null) {
+                throw new Error("token 未定义或为空");
             }
+        } else {
+            throw new Error("请求体不是有效的 JSON 对象");
         }
 
         // 存储 mallId 和 token 到持久化存储
@@ -72,7 +50,7 @@ if ($request.url.indexOf(urlPattern) !== -1 && $request.method === "POST") {
         console.log(message); // 输出到 Quantumult X 日志
         $notify("参数捕获成功", "", message); // 发送通知
     } catch (e) {
-        const errorMessage = `捕获失败: ${e.message}`;
+        const errorMessage = `捕获失败: ${e.message}\n请求体: ${$request.body}`;
         console.log(errorMessage);
         $notify("参数捕获失败", "", errorMessage);
     }
