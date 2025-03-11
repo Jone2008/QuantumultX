@@ -25,12 +25,16 @@ if ($request.url.indexOf(urlPattern) !== -1 && $request.method === "POST") {
         try {
             const requestBody = JSON.parse($request.body);
             if (requestBody && typeof requestBody === 'object') {
-                mallId = requestBody.MallId;
-                token = requestBody.Header && requestBody.Header.Token;
+                // 支持 MallId 和 MallID（大小写不敏感）
+                mallId = requestBody.MallId !== undefined ? requestBody.MallId : requestBody.MallID;
+                // 检查 Header 是否存在，并支持 Token 的变体
+                token = requestBody.Header && (requestBody.Header.Token || requestBody.Header.token);
 
+                // 检查 mallId 是否有效
                 if (mallId === undefined || mallId === null) {
                     throw new Error("mallId 未定义或为空 (JSON)");
                 }
+                // 检查 token 是否有效
                 if (token === undefined || token === null) {
                     throw new Error("token 未定义或为空 (JSON)");
                 }
@@ -38,13 +42,14 @@ if ($request.url.indexOf(urlPattern) !== -1 && $request.method === "POST") {
                 throw new Error("JSON 请求体无效");
             }
         } catch (jsonError) {
-            console.log(`JSON 解析失败: ${jsonError.message}, 尝试其他格式`);
+            console.log(`JSON 解析失败: ${jsonError.message}`);
 
             // 尝试解析 URL-encoded 格式
             if ($request.body.includes("=") && $request.body.includes("&")) {
                 const params = new URLSearchParams($request.body);
-                mallId = params.get("MallId");
-                token = params.get("Header.Token"); // 注意：URL-encoded 中 token 可能以其他形式传递
+                // 支持大小写变体
+                mallId = params.get("MallId") || params.get("MallID");
+                token = params.get("Header.Token") || params.get("token");
 
                 if (mallId === null) {
                     throw new Error("mallId 未定义或为空 (URL-encoded)");
@@ -53,8 +58,8 @@ if ($request.url.indexOf(urlPattern) !== -1 && $request.method === "POST") {
                     throw new Error("token 未定义或为空 (URL-encoded)");
                 }
             } else {
-                // 其他格式暂不处理
-                throw new Error("未知请求体格式: " + $request.body.substring(0, 50));
+                // 其他格式，完整输出请求体
+                throw new Error(`未知请求体格式: ${$request.body}`);
             }
         }
 
