@@ -1,3 +1,4 @@
+/*
 # 监听签到请求以提取 mallId 和 token
 [rewrite_local]
 ^https://m\.mallcoo\.cn/api/user/User/CheckinV2 url script-request-body https://raw.githubusercontent.com/Jone2008/QuantumultX/refs/heads/master/wxgetcookie.js
@@ -5,6 +6,7 @@
 # MITM 配置
 [mitm]
 hostname = m.mallcoo.cn
+*/
 
 // Quantumult X 脚本：自动获取 mallId 和 token 并打印
 const urlPattern = "https://m.mallcoo.cn/api/user/User/CheckinV2";
