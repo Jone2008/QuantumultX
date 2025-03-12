@@ -7,6 +7,17 @@
  * 更新时间：2024-03-11 新增 3 个浏览任务，感谢 @leiyiyan 提供帮助
  * 更新时间：2024-03-12 新增用户昵称和积分查询，修复看视频任务二次任务
  * 自修改-更新时间：2025-03-12 添加当token过期抓取自动覆盖旧token功能
+
+ -------------- Quantumult X 配置 --------------
+
+[MITM]
+hostname = api.660pp.com
+
+[rewrite_local]
+^https:\/\/api\.660pp\.com\/rest\/[\d\.]+?\/user\/token url script-request-header https://raw.githubusercontent.com/Jone2008/QuantumultX/refs/heads/master/pp_parking.js
+
+[task_local]
+17 7 * * * https://raw.githubusercontent.com/Jone2008/QuantumultX/refs/heads/master/pp_parking.js, tag=PP 停车, img-url=https://raw.githubusercontent.com/FoKit/Scripts/main/images/pp_parking.png, enabled=true
  */
 
 const $ = new Env('PP 停车');
