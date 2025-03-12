@@ -6,7 +6,7 @@
  * BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 更新时间：2024-03-11 新增 3 个浏览任务，感谢 @leiyiyan 提供帮助
  * 更新时间：2024-03-12 新增用户昵称和积分查询，修复看视频任务二次任务
- * 自修改-更新时间：2025-03-12 添加当token过期抓取自动覆盖旧token功能
+ * 自修改-更新时间：2025-03-12 添加当token过期则先清空旧，再抓取新的，避免新旧重叠。去除多账号支持。
 
  -------------- Quantumult X 配置 --------------
 
@@ -21,48 +21,39 @@ hostname = api.660pp.com
  */
 
 const $ = new Env('PP 停车');
-$.is_debug = ($.isNode() ? process.env['IS_DEDUG'] : $.getdata('is_debug')) || 'false';
+$.is_debug = ($.isNode() ? process.env['IS_DEBUG'] : $.getdata('is_debug')) || 'false';
 $.token = ($.isNode() ? process.env['PP_TOKEN'] : $.getdata('pp_token')) || '';
-$.tokenArr = $.toObj($.token) || [];
 const app_id = $.appid = 'wxa204074068ad40ef';
 $.messages = [];
 
 // 主函数
 async function main() {
+  // 获取微信 Code
   await getWxCode();
-  for (let i = 0; i < $.codeList.length; i++) {
-    $.token = '';
-    $.wx_code = $.codeList[i];
-    await getToken();
-    if ($.token && !$.tokenArr.includes($.token)) {
-      $.tokenArr.push($.token);
-    }
+  if ($.codeList.length === 0) {
+    throw new Error('未获取到微信 Code');
   }
 
-  if ($.tokenArr.length) {
-    $.log(`找到 ${$.tokenArr.length} 个 Token 变量 ✅`);
-    // 保存初始token数组
-    $.setdata($.toStr($.tokenArr), 'pp_token');
-    for (let i = 0; i < $.tokenArr.length; i++) {
-      $.log(`----- 账号 [${i + 1}] 开始执行 -----`);
-      $.nickname = '';
-      $.identity = '';
-      $.mobile = '';
-      $.token = 'Bearer ' + $.tokenArr[i];
+  // 获取 Token
+  $.wx_code = $.codeList[0];
+  await getToken();
 
-      await whoami();
-
-      if (!$.token) continue;
-
-      await balance();
-      await task();
-    }
-    $.log(`----- 所有账号执行完成 -----`);
-    // 最后更新存储的token数组
-    $.setdata($.toStr($.tokenArr), 'pp_token');
-  } else {
-    throw new Error('未找到 Token 变量 ❌');
+  if (!$.token) {
+    throw new Error('未找到 Token');
   }
+
+  $.token = 'Bearer ' + $.token;
+
+  // 用户信息
+  await whoami();
+
+  if (!$.token) return;
+
+  // 用户积分
+  await balance();
+
+  // 执行任务
+  await task();
 }
 
 // 获取任务列表
@@ -190,9 +181,11 @@ async function getToken() {
 
   const result = await Request(options);
   if (result?.code == "1001") {
-    const { access_token, identity, mobile, openid, nickname } = result.payload;
+    const { access_token } = result.payload;
     $.token = access_token.value;
     $.log(`✅ 成功获取 Token`);
+    // 保存新 token
+    $.setdata($.token, 'pp_token');
   } else {
     msg = `❌ 获取 Token 失败: ${$.toStr(result)}`;
   }
@@ -218,19 +211,23 @@ async function whoami() {
     $.nickname = nickname;
     $.log(`✅ 用户信息获取成功`);
   } else if (result?.code == "401") {
-    $.log(`Token 已失效，开始重新获取...`);
-    const currentIndex = $.tokenArr.findIndex(t => $.token === 'Bearer ' + t);
-    await getToken();
-    if ($.token) {
-      if (currentIndex !== -1) {
-        $.tokenArr[currentIndex] = $.token;
+    $.log(`Token 已过期，开始清除旧 token 并重新获取...`);
+    // 清除旧 token
+    $.setdata('', 'pp_token');
+    $.token = '';
+    // 重新获取微信 Code
+    await getWxCode();
+    if ($.codeList.length > 0) {
+      $.wx_code = $.codeList[0];
+      await getToken();
+      if ($.token) {
         $.token = 'Bearer ' + $.token;
-        $.setdata($.toStr($.tokenArr), 'pp_token');
-        $.log(`✅ Token 更新成功并已覆盖旧Token`);
+        $.log(`✅ 新 Token 获取成功并已写入`);
+      } else {
+        msg = `❌ 新 Token 获取失败`;
       }
     } else {
-      $.token = '';
-      msg = `❌ Token 重新获取失败`;
+      msg = `❌ 无法获取微信 Code`;
     }
   } else {
     msg = `❌ 用户信息获取失败: ${$.toStr(result)}`;
@@ -286,14 +283,7 @@ function GetCookie() {
     const headers = ObjectKeys2LowerCase($request.headers);
     $.newToken = headers['rest_api_token'];
     if (/user\/token/.test($request.url) && $.newToken) {
-      const tokenIndex = $.tokenArr.indexOf($.newToken);
-      if (tokenIndex === -1) {
-        $.tokenArr.push($.newToken);
-      } else {
-        $.tokenArr[tokenIndex] = $.newToken;
-      }
-      console.log(`更新用户数据 ${$.newToken}`);
-      $.setdata($.toStr($.tokenArr), 'pp_token');
+      $.setdata($.newToken, 'pp_token');
       $.msg($.name, ``, `Token 获取/更新成功。🎉`);
     }
   } catch (e) {
