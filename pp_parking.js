@@ -7,8 +7,10 @@
  * 更新时间：2024-03-11 新增 3 个浏览任务，感谢 @leiyiyan 提供帮助
  * 更新时间：2024-03-12 新增用户昵称和积分查询，修复看视频任务二次任务
  * 自修改-更新时间：2025-03-12 添加当token过期则先清空旧，再抓取新的，避免新旧重叠。去除多账号支持。
+ * 自修改-更新时间：2025-03-13 修改统一token格式，移除 WxCode 依赖，仅使用 PP_TOKEN。
 
- -------------- Quantumult X 配置 --------------
+ 
+-------------- Quantumult X 配置 --------------
 
 [MITM]
 hostname = api.660pp.com
@@ -22,27 +24,30 @@ hostname = api.660pp.com
 
 const $ = new Env('PP 停车');
 $.is_debug = ($.isNode() ? process.env['IS_DEBUG'] : $.getdata('is_debug')) || 'false';
-$.token = ($.isNode() ? process.env['PP_TOKEN'] : $.getdata('pp_token')) || '';
+$.token = '';
 const app_id = $.appid = 'wxa204074068ad40ef';
 $.messages = [];
 
 // 主函数
 async function main() {
-  // 获取微信 Code
-  await getWxCode();
-  if ($.codeList.length === 0) {
-    throw new Error('未获取到微信 Code');
+  // 从环境变量获取 token
+  let rawToken = $.isNode() ? process.env['PP_TOKEN'] : $.getdata('pp_token');
+  if (!rawToken) {
+    throw new Error('未设置 PP_TOKEN 环境变量');
   }
 
-  // 获取 Token
-  $.wx_code = $.codeList[0];
-  await getToken();
-
-  if (!$.token) {
-    throw new Error('未找到 Token');
+  try {
+    // 解析 PP_TOKEN，期望格式为 ["token"]
+    const tokenArray = JSON.parse(rawToken);
+    if (!Array.isArray(tokenArray) || tokenArray.length === 0) {
+      throw new Error('PP_TOKEN 格式错误，应为 ["token"]');
+    }
+    $.token = 'Bearer ' + tokenArray[0];
+  } catch (e) {
+    throw new Error(`PP_TOKEN 解析失败: ${e.message}`);
   }
 
-  $.token = 'Bearer ' + $.token;
+  $.log(`✅ 成功从 PP_TOKEN 获取 Token`);
 
   // 用户信息
   await whoami();
@@ -162,36 +167,6 @@ async function acquire(purpose, taskName) {
   $.messages.push(msg) && $.log(msg);
 }
 
-// 获取 Token
-async function getToken() {
-  let msg = '';
-  const options = {
-    url: `https://user-api.4pyun.com/rest/2.0/user/oauth`,
-    headers: {
-      'Content-Type': `application/json`,
-    },
-    body: encryption(
-      JSON.stringify({
-        oauth_code: $.wx_code,
-        oauth_app_id: app_id,
-        app_id
-      })
-    )
-  };
-
-  const result = await Request(options);
-  if (result?.code == "1001") {
-    const { access_token } = result.payload;
-    $.token = access_token.value;
-    $.log(`✅ 成功获取 Token`);
-    // 保存新 token
-    $.setdata($.token, 'pp_token');
-  } else {
-    msg = `❌ 获取 Token 失败: ${$.toStr(result)}`;
-  }
-  $.messages.push(msg) && $.log(msg);
-}
-
 // 获取用户信息
 async function whoami() {
   let msg = '';
@@ -211,24 +186,11 @@ async function whoami() {
     $.nickname = nickname;
     $.log(`✅ 用户信息获取成功`);
   } else if (result?.code == "401") {
-    $.log(`Token 已过期，开始清除旧 token 并重新获取...`);
+    $.log(`Token 已过期，清除旧 token`);
     // 清除旧 token
     $.setdata('', 'pp_token');
     $.token = '';
-    // 重新获取微信 Code
-    await getWxCode();
-    if ($.codeList.length > 0) {
-      $.wx_code = $.codeList[0];
-      await getToken();
-      if ($.token) {
-        $.token = 'Bearer ' + $.token;
-        $.log(`✅ 新 Token 获取成功并已写入`);
-      } else {
-        msg = `❌ 新 Token 获取失败`;
-      }
-    } else {
-      msg = `❌ 无法获取微信 Code`;
-    }
+    msg = `❌ Token 已过期，请手动更新 PP_TOKEN`;
   } else {
     msg = `❌ 用户信息获取失败: ${$.toStr(result)}`;
   }
@@ -281,32 +243,15 @@ function GetCookie() {
   try {
     debug($request.headers);
     const headers = ObjectKeys2LowerCase($request.headers);
-    $.newToken = headers['rest_api_token'];
-    if (/user\/token/.test($request.url) && $.newToken) {
-      $.setdata($.newToken, 'pp_token');
+    const newToken = headers['rest_api_token'];
+    if (/user\/token/.test($request.url) && newToken) {
+      // 保存为 ["token"] 格式
+      $.setdata(JSON.stringify([newToken]), 'pp_token');
       $.msg($.name, ``, `Token 获取/更新成功。🎉`);
     }
   } catch (e) {
     console.log("❌ autoLogin 数据获取失败");
     console.log(e);
-  }
-}
-
-// 获取微信 Code
-async function getWxCode() {
-  try {
-    $.codeList = [];
-    $.codeServer = ($.isNode() ? process.env["CODESERVER_ADDRESS"] : $.getdata("@codeServer.address")) || '';
-    $.codeFuc = ($.isNode() ? process.env["CODESERVER_FUN"] : $.getdata("@codeServer.fun")) || '';
-    if (!$.codeServer) return $.log(`⚠️ 未配置微信 Code Server。`);
-
-    $.codeList = ($.codeFuc
-      ? (eval($.codeFuc), await WxCode($.appid))
-      : (await Request(`${$.codeServer}/?wxappid=${$.appid}`))?.split("|"))
-      .filter(item => item.length === 32);
-    $.log(`♻️ 获取到 ${$.codeList.length} 个微信 Code:\n${$.codeList}`);
-  } catch (e) {
-    $.logErr(`❌ 获取微信 Code 失败！`);
   }
 }
 
@@ -630,7 +575,7 @@ function Env(t, e) {
         case "Node.js": 
           return this.data = this.loaddata(), this.data[e] = t, this.writedata(), !0; 
         default: 
-          return this.data && this.data[e] || null 
+          return this.data && this.data[t] || null 
       } 
     } 
     initGotEnv(t) { 
