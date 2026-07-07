@@ -264,11 +264,6 @@ proxy-groups:
     type: url-test
     interval: 300
     tolerance: 50
-  - name: 奈飞节点
-    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Netflix.png
-    include-all: true
-    filter: (?i)NF|奈飞|解锁|Netflix|NETFLIX|Media
-    type: select
   - name: GLOBAL
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
     include-all: true
@@ -281,8 +276,6 @@ proxy-groups:
       - OpenAi
       - AI-UNHK
       - 油管视频
-      - 奈飞视频
-      - 巴哈姆特
       - 哔哩哔哩
       - 国外媒体
       - 国内媒体
@@ -303,7 +296,6 @@ proxy-groups:
       - 台湾节点
       - 狮城节点
       - 韩国节点
-      - 奈飞节点
 
 rule-providers:
   LocalAreaNetwork:
