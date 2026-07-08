@@ -22,7 +22,7 @@ proxy-groups:
     include-all: true
     interval: 300
     tolerance: 50
-  - name: 电报消息
+  - name: Telegram
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
     type: select
     proxies:
@@ -66,7 +66,7 @@ proxy-groups:
       - 韩国节点
       - 手动切换
       - DIRECT
-  - name: 油管视频
+  - name: YouTube
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     proxies:
@@ -80,6 +80,19 @@ proxy-groups:
       - 韩国节点
       - 手动切换
       - DIRECT
+  - name: Google
+    icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Google.png
+    type: select
+    proxies:
+      - 节点选择
+      - 自动选择
+      - 狮城节点
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 美国节点
+      - 韩国节点
+      - 手动切换
   - name: 哔哩哔哩
     icon: https://testingcf.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/bilibili.png
     type: select
@@ -272,10 +285,11 @@ proxy-groups:
       - 节点选择
       - 手动切换
       - 自动选择
-      - 电报消息
+      - Telegram
       - OpenAi
       - AI-UNHK
-      - 油管视频
+      - YouTube
+      - Google
       - 哔哩哔哩
       - 国外媒体
       - 国内媒体
@@ -335,6 +349,20 @@ rule-providers:
   GoogleCN:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/GoogleCN.list
     path: ./ruleset/GoogleCN.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  Google:
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.list
+    path: ./ruleset/Google.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  GoogleVoice:
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/GoogleVoice/GoogleVoice.list
+    path: ./ruleset/GoogleVoice.list
     behavior: classical
     interval: 86400
     format: text
@@ -444,6 +472,20 @@ rule-providers:
     interval: 86400
     format: text
     type: http
+  YouTube1:
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/YouTube/YouTube.list
+    path: ./ruleset/YouTube1.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
+  YouTubeMusic:
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/YouTubeMusic/YouTubeMusic.list
+    path: ./ruleset/YouTubeMusic.list
+    behavior: classical
+    interval: 86400
+    format: text
+    type: http
   Netflix:
     url: https://testingcf.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Ruleset/Netflix.list
     path: ./ruleset/Netflix.list
@@ -521,21 +563,25 @@ rules:
   - "RULE-SET,BanAD,广告拦截"
   - "RULE-SET,BanProgramAD,应用净化"
   - "RULE-SET,GoogleFCM,谷歌FCM"
-  - "RULE-SET,GoogleCN,全球直连"
+  - "RULE-SET,GoogleCN,Google"
+  - "RULE-SET,Google,Google"
+  - "RULE-SET,GoogleVoice,Google"
   - "RULE-SET,SteamCN,全球直连"
   - "RULE-SET,AI-MIX,AI-UNHK"
   - "RULE-SET,Bing,微软Bing"
   - "RULE-SET,OneDrive,微软云盘"
   - "RULE-SET,Microsoft,微软服务"
   - "RULE-SET,Apple,苹果服务"
-  - "RULE-SET,Telegram,电报消息"
+  - "RULE-SET,Telegram,Telegram"
   - "RULE-SET,OpenAi,OpenAi"
   - "RULE-SET,Epic,游戏平台"
   - "RULE-SET,Origin,游戏平台"
   - "RULE-SET,Sony,游戏平台"
   - "RULE-SET,Steam,游戏平台"
   - "RULE-SET,Nintendo,游戏平台"
-  - "RULE-SET,YouTube,油管视频"
+  - "RULE-SET,YouTube,YouTube"
+  - "RULE-SET,YouTube1,YouTube"
+  - "RULE-SET,YouTubeMusic,YouTube"
   - "RULE-SET,BilibiliHMT,哔哩哔哩"
   - "RULE-SET,Bilibili,哔哩哔哩"
   - "RULE-SET,ChinaMedia,国内媒体"
