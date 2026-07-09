@@ -354,14 +354,14 @@ rule-providers:
     format: text
     type: http
   Google:
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.list
+    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Google/Google.list
     path: ./ruleset/Google.list
     behavior: classical
     interval: 86400
     format: text
     type: http
   GoogleVoice:
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/GoogleVoice/GoogleVoice.list
+    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GoogleVoice/GoogleVoice.list
     path: ./ruleset/GoogleVoice.list
     behavior: classical
     interval: 86400
@@ -473,14 +473,14 @@ rule-providers:
     format: text
     type: http
   YouTube1:
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/YouTube/YouTube.list
+    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/YouTube/YouTube.list
     path: ./ruleset/YouTube1.list
     behavior: classical
     interval: 86400
     format: text
     type: http
   YouTubeMusic:
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/YouTubeMusic/YouTubeMusic.list
+    url: https://testingcf.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/YouTubeMusic/YouTubeMusic.list
     path: ./ruleset/YouTubeMusic.list
     behavior: classical
     interval: 86400
