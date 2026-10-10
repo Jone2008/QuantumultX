@@ -2,11 +2,6 @@ import os
 import re
 import datetime
 import requests
-import urllib3
-
-# 禁用安全证书警告
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 def get_html(url):
     """采用标准浏览器头抓取网页"""
     headers = {
@@ -17,7 +12,7 @@ def get_html(url):
         "Connection": "keep-alive"
     }
     try:
-        response = requests.get(url, headers=headers, timeout=15, verify=False)
+        response = requests.get(url, headers=headers, timeout=15, verify=True)
         response.raise_for_status()
         response.encoding = response.apparent_encoding if response.apparent_encoding else 'utf-8'
         return response.text
